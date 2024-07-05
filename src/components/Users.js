@@ -3,16 +3,32 @@ import { useNavigate } from "react-router-dom";
 
 export default function Users() {
   const [api, setApi] = useState([]);
+  const [loading, setLoading] = useState(true); // Added loading state
   const navigate = useNavigate();
+
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((response) => response.json())
       .then((data) => {
         setApi(data);
-        // console.log(data);
+        setLoading(false); // Set loading to false when data is fetched
       })
-      .catch((error) => console.error("Error fetching data:", error));
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false); // Ensure loading is set to false on error
+      });
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+          <p className="text-lg font-semibold text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -23,9 +39,8 @@ export default function Users() {
             <li
               onClick={() => navigate(`userinfo/${user.id}`)}
               key={user.id}
-              className="mb-2 p-2 bg-gray-200 rounded-md cursor-pointer"
+              className="mb-2 p-2 bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300"
             >
-              {/* <Link to="/userinfo">{user.name}</Link> */}
               {user.name}
             </li>
           ))}
