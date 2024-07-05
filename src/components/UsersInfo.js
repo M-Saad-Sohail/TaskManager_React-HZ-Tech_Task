@@ -59,10 +59,14 @@ export default function UsersInfo() {
     setEditTaskModelIsOpen(false);
   }
 
-  const notify = (messege) => toast(messege);
+  const notify = (message) => toast(message);
 
   const addTaskHandler = (e) => {
     e.preventDefault();
+    if (!task || !deadline) {
+      notify("Both task and deadline fields are required!");
+      return;
+    }
     const taskObj = {
       id: Date.now(),
       task: task,
@@ -75,6 +79,10 @@ export default function UsersInfo() {
 
   const editTaskHandler = (e) => {
     e.preventDefault();
+    if (!task || !deadline) {
+      notify("Both task and deadline fields are required!");
+      return;
+    }
     if (currentTaskId) {
       const updatedTask = {
         id: currentTaskId,
