@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Modal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
 import { addTask, removeTask } from "../redux/features/taskManagerSlice";
@@ -22,51 +22,40 @@ export default function UsersInfo() {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [task, setTask] = useState("");
   const [deadline, setDeadline] = useState("");
-  const [userId, setUserId] = useState();
 
-  //   DATA COMING FROM REDUX STORE
-  const tasks = useSelector((state) => state.taskManager.tasks);
+  const tasks = useSelector((state) => state.taskManager.tasks[id] || []);
 
-  //   TASK BEING REMOVED FROM STORE
-  const handleRemoveTask = (taskId) => {
-    dispatch(removeTask(taskId));
-  };
+//   useEffect(() => {
+//     // If needed, any setup for userId can be done here
+//   }, [id]);
 
-  useEffect(() => {
-    setUserId(id);
-  }, [id]);
-
-  //   MODAL FUNCTIONALITY
   function openModal() {
     setIsOpen(true);
   }
+
   function afterOpenModal() {
     subtitle.style.color = "#f00";
   }
+
   function closeModal() {
     setIsOpen(false);
   }
-  //   MODAL FUNCTIONALITY
 
   const addTaskHandler = (e) => {
     e.preventDefault();
     const taskObj = {
+      id: Date.now(),
       task: task,
       deadline: deadline,
-      id: userId,
     };
-    console.log(taskObj);
-    dispatch(addTask(taskObj));
-    // console.log(`The id for this user is ${userId}`);
+    dispatch(addTask({ userId: id, task: taskObj }));
     closeModal();
-    // navigate(`/userdata`);
   };
-    console.log(tasks);
-  //   if () {
-  //     console.log("Array Empty");
-  //   } else {
-  //     console.log("Array have objects");
-  //   }
+
+  const handleRemoveTask = (taskId) => {
+    dispatch(removeTask({ userId: id, taskId }));
+  };
+
   return (
     <div>
       {tasks.length === 0 ? (
@@ -110,7 +99,6 @@ export default function UsersInfo() {
         Add Tasks
       </button>
 
-      {/* MODAL FOR ADDING TASKS */}
       <Modal
         isOpen={modalIsOpen}
         onAfterOpen={afterOpenModal}
