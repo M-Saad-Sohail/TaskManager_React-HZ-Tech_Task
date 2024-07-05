@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Modal from "react-modal";
-import { useDispatch } from "react-redux";
-import { addTask } from "../redux/features/taskManagerSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addTask, removeTask } from "../redux/features/taskManagerSlice";
 
 const customStyles = {
   content: {
@@ -17,29 +17,36 @@ const customStyles = {
 
 export default function UsersInfo() {
   let subtitle;
+  let { id } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [modalIsOpen, setIsOpen] = useState(false);
   const [task, setTask] = useState("");
   const [deadline, setDeadline] = useState("");
   const [userId, setUserId] = useState();
-  let { id } = useParams();
+
+  //   DATA COMING FROM REDUX STORE
+  const tasks = useSelector((state) => state.taskManager.tasks);
+
+  //   TASK BEING REMOVED FROM STORE
+  const handleRemoveTask = (taskId) => {
+    dispatch(removeTask(taskId));
+  };
 
   useEffect(() => {
     setUserId(id);
   }, [id]);
 
+  //   MODAL FUNCTIONALITY
   function openModal() {
     setIsOpen(true);
   }
-
   function afterOpenModal() {
     subtitle.style.color = "#f00";
   }
-
   function closeModal() {
     setIsOpen(false);
   }
+  //   MODAL FUNCTIONALITY
 
   const addTaskHandler = (e) => {
     e.preventDefault();
@@ -50,12 +57,46 @@ export default function UsersInfo() {
     };
     console.log(taskObj);
     dispatch(addTask(taskObj));
-    console.log(`The id for this user is ${userId}`);
-    navigate(`/userdata`);
+    // console.log(`The id for this user is ${userId}`);
+    closeModal();
+    // navigate(`/userdata`);
   };
-
+    console.log(tasks);
+  //   if () {
+  //     console.log("Array Empty");
+  //   } else {
+  //     console.log("Array have objects");
+  //   }
   return (
     <div>
+      {tasks.length === 0 ? (
+        <h1 className="text-2xl font-bold mb-4">No task found for user</h1>
+      ) : (
+        <div className="max-w-2xl mx-auto p-4">
+          <h1 className="text-2xl font-bold mb-4">Task List</h1>
+          <ul className="space-y-4">
+            {tasks.map((task) => (
+              <li
+                key={task.id}
+                className="flex justify-between items-center p-4 bg-gray-100 rounded-lg shadow-md"
+              >
+                <div>
+                  <p className="text-lg font-medium">{task.task}</p>
+                  <p className="text-sm text-gray-600">
+                    Deadline: {task.deadline}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleRemoveTask(task.id)}
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <button
         type="button"
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
@@ -68,6 +109,8 @@ export default function UsersInfo() {
       >
         Add Tasks
       </button>
+
+      {/* MODAL FOR ADDING TASKS */}
       <Modal
         isOpen={modalIsOpen}
         onAfterOpen={afterOpenModal}
