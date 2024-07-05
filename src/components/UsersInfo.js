@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Modal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
-import { addTask, removeTask, updateTask } from "../redux/features/taskManagerSlice"; 
+import {
+  addTask,
+  removeTask,
+  updateTask,
+} from "../redux/features/taskManagerSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -55,7 +59,7 @@ export default function UsersInfo() {
     setEditTaskModelIsOpen(false);
   }
 
-  const notify = () => toast("User Task Added!");
+  const notify = (messege) => toast(messege);
 
   const addTaskHandler = (e) => {
     e.preventDefault();
@@ -65,7 +69,7 @@ export default function UsersInfo() {
       deadline: deadline,
     };
     dispatch(addTask({ userId: id, task: taskObj }));
-    notify();
+    notify("User Task Added!");
     closeModal();
   };
 
@@ -78,13 +82,14 @@ export default function UsersInfo() {
         deadline: deadline,
       };
       dispatch(updateTask({ userId: id, task: updatedTask }));
-      toast("User Task Updated!");
+      notify("User Task Updated!");
       closeEditModal();
     }
   };
 
   const handleRemoveTask = (taskId) => {
     dispatch(removeTask({ userId: id, taskId }));
+    notify("Task Removed!");
   };
 
   return (
@@ -128,12 +133,12 @@ export default function UsersInfo() {
           </ul>
         </div>
       )}
-      <button
-        type="button"
+      <Link
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        to="/"
       >
-        <Link to="/">Back to Users</Link>
-      </button>
+        Back to Users
+      </Link>
       <button
         onClick={openModal}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -175,7 +180,7 @@ export default function UsersInfo() {
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="deadline"
-                type="date" 
+                type="date"
                 placeholder="Select date"
                 onChange={(e) => setDeadline(e.target.value)}
               />
@@ -208,9 +213,14 @@ export default function UsersInfo() {
         style={customStyles}
         contentLabel="Edit Task Modal"
       >
-        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Edit Your tasks here</h2>
+        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>
+          Edit Your tasks here
+        </h2>
         <div className="w-full max-w-xs">
-          <form className="bg-white rounded px-8 pt-6 pb-8 mb-4" onSubmit={editTaskHandler}>
+          <form
+            className="bg-white rounded px-8 pt-6 pb-8 mb-4"
+            onSubmit={editTaskHandler}
+          >
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
