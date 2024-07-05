@@ -23,8 +23,17 @@ export const taskManagerSlice = createSlice({
         );
       }
     },
+    updateTask: (state, action) => {
+      const { userId, task } = action.payload;
+      if (state.tasks[userId]) {
+        const index = state.tasks[userId].findIndex((t) => t.id === task.id);
+        if (index !== -1) {
+          state.tasks[userId][index] = task;
+        }
+      }
+    },
   },
 });
 
-export const { addTask, removeTask } = taskManagerSlice.actions;
+export const { addTask, removeTask, updateTask } = taskManagerSlice.actions;
 export default taskManagerSlice.reducer;
