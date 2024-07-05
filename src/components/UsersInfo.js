@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import Modal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
 import { addTask, removeTask } from "../redux/features/taskManagerSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const customStyles = {
   content: {
@@ -25,9 +27,9 @@ export default function UsersInfo() {
 
   const tasks = useSelector((state) => state.taskManager.tasks[id] || []);
 
-//   useEffect(() => {
-//     // If needed, any setup for userId can be done here
-//   }, [id]);
+  //   useEffect(() => {
+  //     // If needed, any setup for userId can be done here
+  //   }, [id]);
 
   function openModal() {
     setIsOpen(true);
@@ -41,6 +43,7 @@ export default function UsersInfo() {
     setIsOpen(false);
   }
 
+  const notify = () => toast("User Task Added!");
   const addTaskHandler = (e) => {
     e.preventDefault();
     const taskObj = {
@@ -49,6 +52,7 @@ export default function UsersInfo() {
       deadline: deadline,
     };
     dispatch(addTask({ userId: id, task: taskObj }));
+    notify();
     closeModal();
   };
 
@@ -58,6 +62,7 @@ export default function UsersInfo() {
 
   return (
     <div>
+      <ToastContainer />
       {tasks.length === 0 ? (
         <h1 className="text-2xl font-bold mb-4">No task found for user</h1>
       ) : (
