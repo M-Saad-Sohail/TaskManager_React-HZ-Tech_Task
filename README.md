@@ -1,6 +1,8 @@
-HOSTED LINK:
-  NETLIFY: https://taskmanager-saadsohail.netlify.app/
-  VERCEL: https://task-manager-react-fawn.vercel.app/
+HOSTED LINK NETLIFY:
+https://taskmanager-saadsohail.netlify.app/
+
+HOSTED LINK VERCEL:
+https://task-manager-react-fawn.vercel.app/
 
 
 
