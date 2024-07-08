@@ -11,7 +11,7 @@ const taskManagerSlice = createSlice({
       if (!state.tasks[userId]) {
         state.tasks[userId] = [];
       }
-      state.tasks[userId].push(task);
+      state.tasks[userId].unshift(task);
     },
     removeTask(state, action) {
       const { userId, taskId } = action.payload;

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Link, useParams } from "react-router-dom";
 import Modal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,8 +9,6 @@ import {
   removeTask,
   updateTask,
 } from "../redux/features/taskManagerSlice";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const customStyles = {
   content: {
@@ -75,6 +75,7 @@ export default function UsersInfo() {
     dispatch(addTask({ userId: id, task: taskObj }));
     notify("User Task Added!");
     closeModal();
+    setTask("");
   };
 
   const editTaskHandler = (e) => {
