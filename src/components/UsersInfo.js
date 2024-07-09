@@ -1,14 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import Modal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addTask,
-  removeTask,
-  updateTask,
-} from "../redux/features/taskManagerSlice";
+import { addTask, removeTask } from "../redux/features/taskManagerSlice";
 
 const customStyles = {
   content: {
@@ -26,6 +22,7 @@ export default function UsersInfo() {
   let { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [addTaskModalIsOpen, setAddTaskModelIsOpen] = useState(false);
   const [editTaskModalIsOpen, setEditTaskModelIsOpen] = useState(false);
   const [task, setTask] = useState("");
@@ -33,6 +30,13 @@ export default function UsersInfo() {
   const [currentTaskId, setCurrentTaskId] = useState(null);
 
   const tasks = useSelector((state) => state.taskManager.tasks[id] || []);
+
+  useEffect(() => {
+    if (location.state?.taskUpdated) {
+      toast.success("Task successfully updated!");
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
 
   function openModal() {
     setAddTaskModelIsOpen(true);
@@ -61,12 +65,12 @@ export default function UsersInfo() {
     setEditTaskModelIsOpen(false);
   }
 
-  const notify = (message) => toast(message);
+  // const toast.success = (message) => toast(message);
 
   const addTaskHandler = (e) => {
     e.preventDefault();
     if (!task || !deadline) {
-      notify("Both task and deadline fields are required!");
+      toast.warn("Both task and deadline fields are required!");
       return;
     }
     const taskObj = {
@@ -75,37 +79,31 @@ export default function UsersInfo() {
       deadline: deadline,
     };
     dispatch(addTask({ userId: id, task: taskObj }));
-    notify("User Task Added!");
+    toast.success("User Task Added!");
     closeModal();
     setTask("");
   };
 
-  const editTaskHandler = (e) => {
-    e.preventDefault();
-    if (!task || !deadline) {
-      notify("Both task and deadline fields are required!");
-      return;
-    }
-    if (currentTaskId) {
-      const updatedTask = {
-        id: currentTaskId,
-        task: task,
-        deadline: deadline,
-      };
-      dispatch(updateTask({ userId: id, task: updatedTask }));
-      notify("User Task Updated!");
-      closeEditModal();
-    }
-  };
-
   const handleRemoveTask = (taskId) => {
     dispatch(removeTask({ userId: id, taskId }));
-    notify("Task Removed!");
+    toast.success("Task Removed!");
   };
 
   return (
     <div>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggableF
+        pauseOnHover
+        theme="colored"
+        // transition:Bounce
+      />
       {tasks.length === 0 ? (
         <h1 className="text-2xl font-bold mb-4">No task found for user</h1>
       ) : (
@@ -148,24 +146,29 @@ export default function UsersInfo() {
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         to="/"
       >
-        Back to Users
+        Go Back
       </Link>
       <button
         onClick={openModal}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
       >
-        Add Tasks
+        Add Task
       </button>
-      {/* ADD TASK MODAL */}
+      {/* Add Task Modal */}
       <Modal
         isOpen={addTaskModalIsOpen}
         onAfterOpen={afterOpenModal}
+        onRequestClose={closeModal}
         style={customStyles}
         contentLabel="Add Task Modal"
       >
-        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Add your tasks here</h2>
+        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Add Task</h2>
+        <button onClick={closeModal}>close</button>
         <div className="w-full max-w-xs">
-          <form className="bg-white rounded px-8 pt-6 pb-8 mb-4">
+          <form
+            className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+            onSubmit={addTaskHandler}
+          >
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
@@ -178,10 +181,11 @@ export default function UsersInfo() {
                 id="task"
                 type="text"
                 placeholder="task"
+                value={task}
                 onChange={(e) => setTask(e.target.value)}
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-6">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
                 htmlFor="deadline"
@@ -193,92 +197,19 @@ export default function UsersInfo() {
                 id="deadline"
                 type="date"
                 placeholder="Select date"
-                onChange={(e) => setDeadline(e.target.value)}
-              />
-            </div>
-          </form>
-        </div>
-        <div className="flex justify-between w-full">
-          <button
-            type="button"
-            className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-            onClick={closeModal}
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            onClick={addTaskHandler}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
-            Add Task
-          </button>
-        </div>
-      </Modal>
-      {/* ADD TASK MODAL */}
-
-      {/* EDIT TASK MODAL */}
-      <Modal
-        isOpen={editTaskModalIsOpen}
-        onAfterOpen={afterOpenModal}
-        style={customStyles}
-        contentLabel="Edit Task Modal"
-      >
-        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>
-          Edit Your tasks here
-        </h2>
-        <div className="w-full max-w-xs">
-          <form
-            className="bg-white rounded px-8 pt-6 pb-8 mb-4"
-            onSubmit={editTaskHandler}
-          >
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="task"
-              >
-                Task
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="task"
-                type="text"
-                value={task}
-                onChange={(e) => setTask(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="deadline"
-              >
-                Deadline
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="deadline"
-                type="date"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
               />
             </div>
+            <div className="flex items-center justify-between">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="submit"
+              >
+                Add Task
+              </button>
+            </div>
           </form>
-        </div>
-        <div className="flex justify-between w-full">
-          <button
-            type="button"
-            className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-            onClick={closeEditModal}
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            onClick={editTaskHandler}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
-            Edit Task
-          </button>
         </div>
       </Modal>
       {/* EDIT TASK MODAL */}
