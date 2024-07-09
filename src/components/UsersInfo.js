@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Modal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -25,6 +25,7 @@ export default function UsersInfo() {
   let subtitle;
   let { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [addTaskModalIsOpen, setAddTaskModelIsOpen] = useState(false);
   const [editTaskModalIsOpen, setEditTaskModelIsOpen] = useState(false);
   const [task, setTask] = useState("");
@@ -49,7 +50,8 @@ export default function UsersInfo() {
     setCurrentTaskId(taskId);
     setTask(task);
     setDeadline(deadline);
-    setEditTaskModelIsOpen(true);
+    let objIndex = tasks.findIndex((index) => taskId === index.id);
+    navigate(`/edittask/${id}?taskIndex=${objIndex}`);
   }
 
   function closeEditModal() {
