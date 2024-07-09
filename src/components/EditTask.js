@@ -1,9 +1,9 @@
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { updateTask } from "../redux/features/taskManagerSlice";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export default function EditTask() {
   const dispatch = useDispatch();
@@ -44,7 +44,6 @@ export default function EditTask() {
 
   return (
     <>
-      <ToastContainer />
       <div className="w-full max-w-xs mx-auto">
         <form className="bg-white rounded px-8 pt-6 pb-8 mb-4" onSubmit={editTaskHandler}>
           <div className="mb-4">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import Modal from "react-modal";
@@ -81,19 +81,6 @@ export default function UsersInfo() {
 
   return (
     <div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggableF
-        pauseOnHover
-        theme="colored"
-        // transition:Bounce
-      />
       {tasks.length === 0 ? (
         <h1 className="text-2xl font-bold mb-4">No task found for user</h1>
       ) : (

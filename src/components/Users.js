@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function Users() {
   const [api, setApi] = useState([]);
-  const [loading, setLoading] = useState(true); // Added loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -11,11 +11,11 @@ export default function Users() {
       .then((response) => response.json())
       .then((data) => {
         setApi(data);
-        setLoading(false); // Set loading to false when data is fetched
+        setLoading(false); 
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        setLoading(false); // Ensure loading is set to false on error
+        setLoading(false);
       });
   }, []);
 

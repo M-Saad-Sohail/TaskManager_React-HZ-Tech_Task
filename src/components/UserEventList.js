@@ -1,12 +1,12 @@
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export default function UserEventList() {
   const [usersApi, setUsersApi] = useState([]);
+  const [postData, setPostData] = useState([]);
   let clickTimeout = null;
-  const notify = (message) => toast(message);
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
@@ -15,48 +15,61 @@ export default function UserEventList() {
         setUsersApi(data);
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching users:", error);
       });
   }, []);
 
-  const handleClick = (user) => {
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then((response) => response.json())
+      .then((data) => {
+        const limitedPosts = data.slice(0, 10); // Get only the first 10 items
+        setPostData(limitedPosts);
+      })
+      .catch((error) => {
+        console.error("Error fetching posts:", error);
+      });
+  }, []);
+
+  const handleClick = (post) => {
     if (clickTimeout) {
       clearTimeout(clickTimeout);
       clickTimeout = null;
       console.log("double click");
-      notify(`${user.name} has been removed`);
-      setUsersApi((prevUsers) => prevUsers.filter((u) => u.id !== user.id));
+      setPostData((prevPosts) => prevPosts.filter((p) => p.id !== post.id));
+      toast.success(`Post with title "${post.title}" has been removed`);
     } else {
       clickTimeout = setTimeout(() => {
         clickTimeout = null;
         console.log("single click");
-        console.log(user);
-        notify(`${user.name} email is: \n ${user.email}`);
+        const user = usersApi.find((u) => u.id === post.id);
+        if (user) {
+          toast.success(`${user.name}'s email is: ${user.email}`);
+        }
       }, 250);
     }
   };
 
   return (
     <>
-      <ToastContainer />
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="bg-white shadow-md rounded-lg p-6 max-w-md w-full">
           <h1 className="text-2xl font-bold mb-4">Users List</h1>
           <ul>
-            {usersApi.map((user) => (
+            {postData.map((post) => (
               <li
-                onClick={() => handleClick(user)}
-                key={user.id}
+                onClick={() => handleClick(post)}
+                key={post.id}
                 className="mb-2 p-2 bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300"
               >
-                {user.name}
+                {post.title}
               </li>
             ))}
           </ul>
         </div>
         <Link
           to="/"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         >
           Back to users
         </Link>
