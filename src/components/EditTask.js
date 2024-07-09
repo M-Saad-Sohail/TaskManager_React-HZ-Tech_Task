@@ -14,7 +14,6 @@ export default function EditTask() {
   let { id } = useParams();
   const [searchParams] = useSearchParams();
   const taskIndex = searchParams.get("taskIndex");
-  // const notify = (message) => toast(message);
 
   const tasks = useSelector((state) => state.taskManager.tasks[id] || []);
 
@@ -39,7 +38,6 @@ export default function EditTask() {
         deadline: deadline,
       };
       dispatch(updateTask({ userId: id, task: updatedTask }));
-      // notify("User Task Updated!");
       navigate(`/userinfo/${id}`, { state: { taskUpdated: true } });
     }
   };

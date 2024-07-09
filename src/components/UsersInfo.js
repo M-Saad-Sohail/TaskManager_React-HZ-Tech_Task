@@ -24,7 +24,6 @@ export default function UsersInfo() {
   const navigate = useNavigate();
   const location = useLocation();
   const [addTaskModalIsOpen, setAddTaskModelIsOpen] = useState(false);
-  const [editTaskModalIsOpen, setEditTaskModelIsOpen] = useState(false);
   const [task, setTask] = useState("");
   const [deadline, setDeadline] = useState("");
   const [currentTaskId, setCurrentTaskId] = useState(null);
@@ -57,15 +56,6 @@ export default function UsersInfo() {
     let objIndex = tasks.findIndex((index) => taskId === index.id);
     navigate(`/edittask/${id}?taskIndex=${objIndex}`);
   }
-
-  function closeEditModal() {
-    setTask("");
-    setDeadline("");
-    setCurrentTaskId(null);
-    setEditTaskModelIsOpen(false);
-  }
-
-  // const toast.success = (message) => toast(message);
 
   const addTaskHandler = (e) => {
     e.preventDefault();
@@ -212,7 +202,6 @@ export default function UsersInfo() {
           </form>
         </div>
       </Modal>
-      {/* EDIT TASK MODAL */}
     </div>
   );
 }
