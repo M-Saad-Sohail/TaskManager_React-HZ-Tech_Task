@@ -26,7 +26,7 @@ export default function UsersInfo() {
   const [addTaskModalIsOpen, setAddTaskModelIsOpen] = useState(false);
   const [task, setTask] = useState("");
   const [deadline, setDeadline] = useState("");
-  const [currentTaskId, setCurrentTaskId] = useState(null);
+  // const [currentTaskId, setCurrentTaskId] = useState(null);
 
   const tasks = useSelector((state) => state.taskManager.tasks[id] || []);
 
@@ -50,7 +50,7 @@ export default function UsersInfo() {
   }
 
   function openEditModal(taskId, task, deadline) {
-    setCurrentTaskId(taskId);
+    // setCurrentTaskId(taskId);
     setTask(task);
     setDeadline(deadline);
     let objIndex = tasks.findIndex((index) => taskId === index.id);
